@@ -1,6 +1,9 @@
 package gensync
 
-import "sync"
+import (
+	"iter"
+	"sync"
+)
 
 type Map[K comparable, V any] struct {
 	m sync.Map
@@ -33,4 +36,28 @@ func (m *Map[K, V]) Range(fn func(K, V) bool) {
 	m.m.Range(func(k, v any) bool {
 		return fn(k.(K), v.(V))
 	})
+}
+
+ func (m *Map[K, V]) All() iter.Seq2[K, V] {
+	return func(yield func(K, V) bool) {
+		m.m.Range(func(k, v any) bool {
+			return yield(k.(K), v.(V))
+		})
+	}
+}
+
+func (m *Map[K, V]) Keys() iter.Seq[K] {
+	return func(yield func(K) bool) {
+		m.m.Range(func(k, _ any) bool {
+			return yield(k.(K))
+		})
+	}
+}
+
+func (m *Map[K, V]) Values() iter.Seq[V] {
+	return func(yield func(V) bool) {
+		m.m.Range(func(_, v any) bool {
+			return yield(v.(V))
+		})
+	}
 }
