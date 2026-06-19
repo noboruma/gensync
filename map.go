@@ -35,6 +35,15 @@ func (m *Map[K, V]) CompareAndSwap(key K, old, new V) bool {
 	return m.m.CompareAndSwap(key, old, new)
 }
 
+func (m *Map[K, V]) LoadAndDelete(key K) (V, bool) {
+	v, ok := m.m.LoadAndDelete(key)
+	if !ok {
+		var zero V
+		return zero, ok
+	}
+	return v.(V), ok
+}
+
 func (m *Map[K, V]) LoadOrStore(key K, value V) (V, bool) {
 	actual, loaded := m.m.LoadOrStore(key, value)
 	return actual.(V), loaded
