@@ -44,6 +44,10 @@ func (m *Map[K, V]) LoadAndDelete(key K) (V, bool) {
 	return v.(V), ok
 }
 
+func (m *Map[K, V]) Clear() {
+	m.m.Clear()
+}
+
 func (m *Map[K, V]) LoadOrStore(key K, value V) (V, bool) {
 	actual, loaded := m.m.LoadOrStore(key, value)
 	return actual.(V), loaded
